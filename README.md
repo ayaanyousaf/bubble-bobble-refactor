@@ -1,6 +1,10 @@
 # Refactoring PyGame Zero Bubble Bobble Clone
 ##### Author: Ayaan Yousaf
 
+--- 
+
+Source Code: https://github.com/Wireframe-Magazine/Code-the-Classics/tree/master/cavern-master
+
 ## Running the Game
 1. Clone the repository
 2. Run main.py through your IDE or terminal: 
