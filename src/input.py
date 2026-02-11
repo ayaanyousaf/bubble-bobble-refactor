@@ -7,6 +7,7 @@ class InputState:
     jump_pressed: bool
     fire_pressed: bool
     fire_held: bool
+    pause_pressed: bool
 
 
     
