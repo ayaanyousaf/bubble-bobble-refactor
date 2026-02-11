@@ -1,6 +1,5 @@
 from random import choice, randint, random, shuffle
-from pgzero.builtins import sounds, keyboard, Actor
-from src.input import space_pressed
+from pgzero.builtins import sounds, Actor
 
 # Gameplay constants 
 WIDTH = 800
@@ -294,7 +293,7 @@ class Player(GravityActor):
         else:
             return False
 
-    def update(self, game):
+    def update(self, game, input_state):
         # Call GravityActor.update - parameter is whether we want to perform collision detection as we fall. If health
         # is zero, we want the player to just fall out of the level
         super().update(game, detect=(self.health > 0))
@@ -322,9 +321,9 @@ class Player(GravityActor):
             # We're not hurt
             # Get keyboard input. dx represents the direction the player is facing
             dx = 0
-            if keyboard.left:
+            if input_state.left:
                 dx = -1
-            elif keyboard.right:
+            elif input_state.right:
                 dx = 1
 
             if dx != 0:
@@ -336,7 +335,7 @@ class Player(GravityActor):
 
             # Do we need to create a new orb? Space must have been pressed and released, the minimum time between
             # orbs must have passed, and there is a limit of 5 orbs.
-            if space_pressed() and self.fire_timer <= 0 and len(game.orbs) < 5:
+            if input_state.fire_pressed and self.fire_timer <= 0 and len(game.orbs) < 5:
                 # x position will be 38 pixels in front of the player position, while ensuring it is within the
                 # bounds of the level
                 x = min(730, max(70, self.x + self.direction_x * 38))
@@ -346,14 +345,14 @@ class Player(GravityActor):
                 game.play_sound("blow", 4)
                 self.fire_timer = 20
 
-            if keyboard.up and self.vel_y == 0 and self.landed:
+            if input_state.jump_pressed and self.vel_y == 0 and self.landed:
                 # Jump
                 self.vel_y = -16
                 self.landed = False
                 game.play_sound("jump")
 
         # Holding down space causes the current orb (if there is one) to be blown further
-        if keyboard.space:
+        if input_state.fire_held:
             if self.blowing_orb:
                 # Increase blown distance up to a maximum of 120
                 self.blowing_orb.blown_frames += 4
@@ -537,13 +536,17 @@ class Game:
         # in the centre of the screen
         return WIDTH/2
 
-    def update(self):
+    def update(self, input_state):
         self.timer += 1
 
         # Update all objects
-        for obj in self.fruits + self.bolts + self.enemies + self.pops + [self.player] + self.orbs:
+        for obj in self.fruits + self.bolts + self.enemies + self.pops + self.orbs:
             if obj:
                 obj.update(self) # changed to pass game to all objects.
+        
+        # Update player using the input state
+        if self.player: 
+            self.player.update(self, input_state) 
 
         # Use list comprehensions to remove objects which are no longer wanted from the lists. For example, we recreate
         # self.fruits such that it contains all existing fruits except those whose time_to_live counter has reached zero

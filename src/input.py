@@ -1,19 +1,12 @@
-from pgzero.builtins import keyboard
+from dataclasses import dataclass
 
-# Is the space bar currently being pressed down?
-space_down = False
+@dataclass
+class InputState:
+    left: bool
+    right: bool
+    jump_pressed: bool
+    fire_pressed: bool
+    fire_held: bool
 
-# Has the space bar just been pressed? i.e. gone from not being pressed, to being pressed
-def space_pressed():
-    global space_down
-    if keyboard.space:
-        if space_down:
-            # Space was down previous frame, and is still down
-            return False
-        else:
-            # Space wasn't down previous frame, but now is
-            space_down = True
-            return True
-    else:
-        space_down = False
-        return False
+
+    

@@ -1,17 +1,17 @@
-from src.game import Game, Player
-from src.input import space_pressed
+from src.game import Game
 
 class MenuScreen:
     def __init__(self, app):
         self.app = app
         self.game = Game()
 
-    def update(self):
-        if space_pressed():
+    def update(self, input_state):
+        if input_state.fire_pressed:
+            # If space is pressed on menu, swithc to play state
             from src.screens.play import PlayScreen
             self.app.change_screen(PlayScreen(self.app))
         else:
-            self.game.update()
+            self.game.update(input_state)
 
     def draw(self, screen):
         self.game.draw(screen)

@@ -1,4 +1,3 @@
-from src.input import space_pressed
 from src.ui import draw_status
 
 class GameOverScreen: 
@@ -6,9 +5,9 @@ class GameOverScreen:
         self.app = app
         self.game = game
 
-    def update(self):
-        if space_pressed():
-            # Switch to menu state, and create a new game object without a player
+    def update(self, input_state):
+        if input_state.fire_pressed:
+            # If space is pressed on game over screen, switch to menu state
             from src.screens.menu import MenuScreen
             self.app.change_screen(MenuScreen(self.app))
 
